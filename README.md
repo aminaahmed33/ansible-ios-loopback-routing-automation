@@ -18,26 +18,6 @@ This playbook performs the following tasks:
 
 ---
 
-## 🧱 Project Structure
-
-├── inventory.ini
-├── syslog_config.yml
-│
-├── group_vars/
-│ ├── all.yml
-│ ├── vault.yml # 🔐 encrypted (not pushed)
-│ └── vault.yml.example # sample for users
-│
-├── host_vars/
-│ ├── R1.yml
-│ ├── R2.yml
-│ └── R3.yml
-│
-└── README.md
-
-
----
-
 ## Technologies Used
 
 - Ansible
@@ -68,7 +48,6 @@ This file is encrypted using:
 ansible-vault encrypt group_vars/vault.yml
 
 
-
 ---
 
 ### Verification Tasks
@@ -77,6 +56,46 @@ The playbook validates configuration using:
 
 - `show ip interface brief`
 - `show ip route static`
+
+---
+## Configuration Results
+
+### Router R1
+Loopback interfaces and static route successfully configured.
+
+<p align="center">
+  <img src="images/r1.png" width="700">
+</p>
+
+---
+
+### Router R2
+Loopback interfaces and static route successfully configured.
+
+<p align="center">
+  <img src="images/r2.png" width="700">
+</p>
+
+---
+
+### Router R3
+Only loopback interfaces are configured.  
+No static routes are present, as expected.
+
+<p align="center">
+  <img src="images/r3.png" width="700">
+</p>
+
+---
+
+### Observation
+
+This behavior confirms that the playbook correctly applies **conditional logic**:
+
+- Static routes are only configured when defined in `host_vars`
+- Router **R3** does not include `static_routes`, so no routes were applied
+
+when: static_routes is defined
 
 ---
 
