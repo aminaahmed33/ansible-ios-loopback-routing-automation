@@ -1,0 +1,9 @@
+---
+int_id_ip: 
+  - {id: 0, ip: 192.168.3.11}
+  - {id: 1, ip: 192.168.3.12} 
+  - {id: 2, ip: 192.168.3.13}
+  - {id: 3, ip: 192.168.3.14}
+
+#Intentionally do NOT defind sttatic_routes
+...

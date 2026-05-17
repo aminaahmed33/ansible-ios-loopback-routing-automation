@@ -1,0 +1,10 @@
+---
+description: configured using Ansible
+loopback_mask: 255.255.255.255
+int_loopback:
+  - 0
+  - 1
+  - 2
+  - 3
+
+...

@@ -1,0 +1,47 @@
+---
+- name: configure loopbacks and static routes on IOSv routers
+  hosts: routers
+  gather_facts: false
+  connection : network_cli
+
+  tasks:
+    - name: configure loopback interfaces with IP and description
+      cisco.ios.ios_config:
+        parents: interface loopback{{item.id}}
+        lines:
+          - description {{description}}
+          - ip address {{item.ip}} {{loopback_mask}}
+          - description configured by Ansible
+      loop: "{{  int_id_ip}}"
+      loop_control:
+        label: "Loopback{{item.id }}"
+
+    - name: add static routes (if definded for host)
+      cisco.ios.ios_config:
+        lines: 
+          - "ip route {{item.dest | ipaddr('network')}} {{item.dest | ipaddr('netmask')}} {{item.next_hop}} {{item.metric | default('')}}"
+      loop: "{{static_routes}}"
+      when: "static_routes is defined"
+
+    - name: Verify loopback interfaces Configuration
+      cisco.ios.ios_command:
+       commands:
+         - "show ip interface brief | include Loop"
+      register: iface_status
+
+    
+    - name: Display loopback interfaces status 
+      ansible.builtin.debug:
+        #msg: "{{iface_status}}"
+        msg: "{{inventory_hostname}} -Loopback:\n{{iface_status.stdout[0]}}"
+    
+    - name: Verify static routes in routing table
+      cisco.ios.ios_command:
+       commands:
+         - "show ip route static"
+      register: route_check
+    
+    - name: Display static route presence 
+      ansible.builtin.debug:
+        msg: "{{inventory_hostname}} -Static routes:\n{{route_check.stdout[0]}}"
+...
